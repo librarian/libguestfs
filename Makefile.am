@@ -92,9 +92,6 @@ endif
 if HAVE_LUA
 SUBDIRS += lua lua/examples
 endif
-if HAVE_GOBJECT
-SUBDIRS += gobject
-endif
 
 # Unconditional because nothing is built yet.
 SUBDIRS += csharp
