@@ -120,7 +120,7 @@ libguestfs_la_SOURCES = \
 	libguestfs.syms
 
 libguestfs_la_CPPFLAGS = \
-	-DGUESTFS_DEFAULT_PATH='"$(libdir)/guestfs"' \
+	-DGUESTFS_DEFAULT_PATH='"$(prefix)/lib/guestfs"' \
 	-DGUESTFS_WARN_DEPRECATED=1 \
 	-DGUESTFS_PRIVATE=1 \
 	-DLIBOSINFO_DB_PATH='"$(datadir)/libosinfo/db"' \

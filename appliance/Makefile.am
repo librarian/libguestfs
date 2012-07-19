@@ -27,8 +27,8 @@ EXTRA_DIST = \
 	make.sh.in \
 	packagelist.in
 
-fsdir = $(libdir)/guestfs
-superminfsdir = $(libdir)/guestfs/supermin.d
+fsdir = $(prefix)/lib/guestfs
+superminfsdir = $(prefix)/lib/guestfs/supermin.d
 
 fs_DATA =
 superminfs_DATA = \
