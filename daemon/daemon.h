@@ -185,6 +185,8 @@ extern int filesystem_available (const char *filesystem);
 extern int sync_disks (void);
 
 /*-- in ext2.c --*/
+extern int e2prog (char *name); /* Massive hack for RHEL 5. */
+
 /* Confirmed this is true up to ext4 from the Linux sources. */
 #define EXT2_LABEL_MAX 16
 
