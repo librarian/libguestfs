@@ -103,7 +103,7 @@ gl_lock_define_initialized (static, building_lock);
  * $TMPDIR/.guestfs-$UID/ and consists of four files:
  *
  *   $TMPDIR/.guestfs-$UID/checksum       - the checksum
- *   $TMPDIR/.guestfs-$UID/kernel         - the kernel
+ *   $TMPDIR/.guestfs-$UID/kernel         - symlink to the kernel
  *   $TMPDIR/.guestfs-$UID/initrd         - the supermin initrd
  *   $TMPDIR/.guestfs-$UID/root           - the appliance
  *
@@ -627,7 +627,7 @@ hard_link_to_cached_appliance (guestfs_h *g,
     perrorf (g, "link: %s %s", filename, *kernel);
     goto error;
   }
-  (void) utimes (filename, NULL);
+  (void) lutimes (filename, NULL); /* lutimes because it's a symlink */
 
   snprintf (filename, len, "%s/initrd", cachedir);
   (void) unlink (*initrd);
@@ -678,7 +678,6 @@ run_supermin_helper (guestfs_h *g, const char *supermin_path,
     guestfs___cmd_add_arg (cmd, "-g");
     guestfs___cmd_add_arg_format (cmd, "%d", egid);
   }
-  guestfs___cmd_add_arg (cmd, "--copy-kernel");
   guestfs___cmd_add_arg (cmd, "-f");
   guestfs___cmd_add_arg (cmd, "ext2");
   guestfs___cmd_add_arg_format (cmd, "%s/supermin.d", supermin_path);
