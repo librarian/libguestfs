@@ -237,7 +237,7 @@ do_lvcreate (const char *logvol, const char *volgroup, int mbytes)
 
   r = command (NULL, &err,
                str_lvm, "lvcreate",
-               "-L", size, "-n", logvol, volgroup, NULL);
+               "-L", size, "-n", logvol, "-Z", "n", volgroup, NULL);
   if (r == -1) {
     reply_with_error ("%s", err);
     return -1;
@@ -264,7 +264,7 @@ do_lvcreate_free (const char *logvol, const char *volgroup, int percent)
 
   r = command (NULL, &err,
                str_lvm, "lvcreate",
-               "-l", size, "-n", logvol, volgroup, NULL);
+               "-l", size, "-n", logvol, "-Z", "n", volgroup, NULL);
   if (r == -1) {
     reply_with_error ("%s", err);
     return -1;
