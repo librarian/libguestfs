@@ -23,6 +23,7 @@ set -e
 operations=$(
   ./virt-sysprep --list-operations |
     fgrep '*' |
+    grep -v lvm-uuids |
     awk '{printf ("%s,",$1)}' |
     sed 's/,$//'
 )
