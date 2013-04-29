@@ -1,9 +1,9 @@
-How the libguestfs Ubuntu PPA package is done
----------------------------------------------
+How the libguestfs Ubuntu package is made
+-----------------------------------------
 
 I got sick of git-buildpackage which IMHO is very hard to understand.
 
-Instead this package uses a simple git branch ("ubuntu-ppa" in the
+Instead this package uses a simple git branch ("ubuntu" in the
 upstream libguestfs repository).  This branch contains:
 
  - The non-upstream patches to be applied on top of upstream libguestfs.
@@ -17,9 +17,9 @@ A small script called 'debian/copy-patches.sh' extracts the patches
 into debian/patches.  You have to run this after changing any
 non-upstream patches, before doing a debuild.
 
-Note that the ubuntu-ppa git branch is not "fast-forward".  To update
-it, "git reset --hard <commit>" back to the latest upstream commit,
-then "git pull".
+Note that the ubuntu git branch is not "fast-forward".  To update it,
+"git reset --hard <commit>" back to the latest upstream commit, then
+"git pull".
 
 debian/make-source.sh
 ---------------------

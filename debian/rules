@@ -1,0 +1,85 @@
+#!/usr/bin/make -f
+
+# export DH_VERBOSE=1
+
+export LIBGUESTFS_DEBUG := 1
+export LIBGUESTFS_TRACE := 1
+
+# Tests to skip:
+export SKIP_TEST_PARALLEL_MOUNT_LOCAL=1
+export SKIP_TEST_LUKS_SH := 1
+export SKIP_TEST_MOUNTABLE_INSPECT_SH := 1
+
+PYTHONS        := $(filter-out python2.5, $(shell pyversions --installed; py3versions --installed))
+PYTHON_DEFAULT := $(shell pyversions --default)
+RUBIES         := $(shell find /usr/bin/ -name ruby1\* | xargs -n1 readlink -f | xargs -n1 basename)
+RUBY_DEFAULT   := $(shell which ruby | xargs readlink -f | xargs basename)
+LUAS           := lua5.1 lua5.2
+LUA_DEFAULT    := lua5.1
+
+DEFAULT_CONFIG_FLAGS = \
+	--with-readline	     \
+	--disable-haskell    \
+	--disable-php	     \
+	--enable-gtk-doc
+
+BARE_CONFIG_FLAGS = \
+	$(DEFAULT_CONFIG_FLAGS) \
+	--disable-daemon --disable-fuse \
+	--disable-ocaml --disable-perl \
+	--disable-erlang --with-java=no \
+	--disable-gobject
+
+override_dh_auto_configure:
+	rm -f config.cache
+	# Make sure that the file is generated in builddir from the template.
+	rm -f ruby/ext/guestfs/extconf.rb
+	dh_auto_configure -- \
+		$(DEFAULT_CONFIG_FLAGS) \
+		--enable-install-daemon \
+		--with-java=/usr/lib/jvm/default-java \
+		JNI_INSTALL_DIR='$${libdir}/jni'
+
+override_dh_strip:
+	dh_strip --dbg-package=libguestfs0-dbg
+
+override_dh_auto_build:
+	dh_auto_build -- INSTALLDIRS=vendor LD_RUN_PATH=""
+
+override_dh_auto_test:
+	dh_auto_test -- CFLAGS="$(filter-out -Werror=format-security,$(CFLAGS))"
+
+override_dh_auto_install:
+# All build trees contain the library plus guestfish and C virt tools.
+# We assume that the Python version used for building the Python
+# bindings doesn't affect the outcome of those builds.
+	dh_auto_install -- INSTALLDIRS=vendor
+
+override_dh_install:
+	erlang-depends -perlang-guestfs
+# Workarounds for:
+# W: libguestfs-perl: script-not-executable usr/lib/perl5/Sys/bindtests.pl
+# E: libguestfs-dev: non-empty-dependency_libs-in-la-file
+	dh_install -X.la -Xbindtests.pl -X.so.owner --fail-missing
+
+override_dh_auto_test:
+ifeq (,($filter nocheck,$(DEB_BUILD_OPTIONS)))
+	dh_auto_test
+endif
+
+# Workaround for python3-defaults < 3.2~b2-1
+# ("do not rename .so files outside dist-packages directory")
+override_dh_python3:
+	dh_python3 -p python-guestfs
+override_dh_python2:
+	dh_python2 -p python-guestfs -V 2.6-
+
+# Workaround for Lintian warning
+# "{pre,post}inst-has-useless-call-to-ldconfig"
+override_dh_makeshlibs:
+	dh_makeshlibs -X/usr/lib/*/jni
+
+%:
+	dh $@ \
+	   --without=python-support \
+	   --with=autoreconf,ocaml,python2,python3,bash-completion,ruby,gir,lua
