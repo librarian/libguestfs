@@ -1,0 +1,43 @@
+From b85006b0fd65abcbe8be4960d41a1276e2ff0f33 Mon Sep 17 00:00:00 2001
+From: "Richard W.M. Jones" <rjones@redhat.com>
+Date: Tue, 13 Nov 2012 18:33:33 +0000
+Subject: [PATCH 03/10] debian: Revert 3ed3e23ed (no febootstrap copy-kernel
+ option).
+
+---
+ src/appliance.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/src/appliance.c b/src/appliance.c
+index a05e966..cbd6dde 100644
+--- a/src/appliance.c
++++ b/src/appliance.c
+@@ -103,7 +103,7 @@ gl_lock_define_initialized (static, building_lock);
+  * $TMPDIR/.guestfs-$UID/ and consists of four files:
+  *
+  *   $TMPDIR/.guestfs-$UID/checksum       - the checksum
+- *   $TMPDIR/.guestfs-$UID/kernel         - the kernel
++ *   $TMPDIR/.guestfs-$UID/kernel         - symlink to the kernel
+  *   $TMPDIR/.guestfs-$UID/initrd         - the supermin initrd
+  *   $TMPDIR/.guestfs-$UID/root           - the appliance
+  *
+@@ -627,7 +627,7 @@ hard_link_to_cached_appliance (guestfs_h *g,
+     perrorf (g, "link: %s %s", filename, *kernel);
+     goto error;
+   }
+-  (void) utimes (filename, NULL);
++  (void) lutimes (filename, NULL); /* lutimes because it's a symlink */
+ 
+   snprintf (filename, len, "%s/initrd", cachedir);
+   (void) unlink (*initrd);
+@@ -678,7 +678,6 @@ run_supermin_helper (guestfs_h *g, const char *supermin_path,
+     guestfs___cmd_add_arg (cmd, "-g");
+     guestfs___cmd_add_arg_format (cmd, "%d", egid);
+   }
+-  guestfs___cmd_add_arg (cmd, "--copy-kernel");
+   guestfs___cmd_add_arg (cmd, "-f");
+   guestfs___cmd_add_arg (cmd, "ext2");
+   guestfs___cmd_add_arg_format (cmd, "%s/supermin.d", supermin_path);
+-- 
+1.7.10.4
+

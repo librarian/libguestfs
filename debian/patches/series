@@ -1,0 +1,6 @@
+0001-Fix-for-systemd-based-Debian-systems.patch
+0002-Fix-guestfs-supermin-appliance-path.patch
+0003-debian-Revert-3ed3e23ed-no-febootstrap-copy-kernel-o.patch
+0004-ubuntu-Work-around-buggy-lvcreate-udev-in-Ubuntu-12..patch
+0005-ubuntu-Remove-blank-disk.img-test.patch
+0006-ubuntu-sysprep-Disable-lvm-uuids-when-testing.patch

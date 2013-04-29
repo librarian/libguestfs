@@ -1,0 +1,33 @@
+From e3934e10d51d553998f9973acd64874e9818bcd4 Mon Sep 17 00:00:00 2001
+From: "Richard W.M. Jones" <rjones@redhat.com>
+Date: Mon, 22 Apr 2013 15:38:13 +0100
+Subject: [PATCH 05/10] ubuntu: Remove blank-disk.img test.
+
+Ubuntu 12.10 has ancient parted (2.3) which gives an error on a
+completely blank disk, breaking the 'part-list' command (amongst
+others):
+
+  guestfish -a tests/guests/blank-disk.img run : part-list /dev/sda
+  Error: /dev/sda: unrecognised disk label
+
+Remove this disk to avoid failures in virt-alignment-scan and other
+tests.
+---
+ tests/guests/Makefile.am |    1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/tests/guests/Makefile.am b/tests/guests/Makefile.am
+index e116a12..ba22303 100644
+--- a/tests/guests/Makefile.am
++++ b/tests/guests/Makefile.am
+@@ -39,7 +39,6 @@ EXTRA_DIST = \
+ 	guests.xml.in
+ 
+ disk_images = \
+-	blank-disk.img \
+ 	blank-part.img \
+ 	blank-fs.img \
+ 	blank-bootroot.img \
+-- 
+1.7.10.4
+

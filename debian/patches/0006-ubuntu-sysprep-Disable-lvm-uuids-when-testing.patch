@@ -1,0 +1,29 @@
+From b1bb880554a01079b7d4ba6c59c9ceaa6e69e2d8 Mon Sep 17 00:00:00 2001
+From: "Richard W.M. Jones" <rjones@redhat.com>
+Date: Mon, 22 Apr 2013 16:16:09 +0100
+Subject: [PATCH 06/10] ubuntu: sysprep: Disable lvm-uuids when testing.
+
+It fails like this:
+
+sysprep operation failed: exception: Guestfs.Error("pvchange_uuid_all:   Volume group containing /dev/sda2 has active logical volumes")
+
+Possibly related to broken udev rules in Ubuntu.
+---
+ sysprep/test-virt-sysprep.sh |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sysprep/test-virt-sysprep.sh b/sysprep/test-virt-sysprep.sh
+index 7c4660a..266d362 100755
+--- a/sysprep/test-virt-sysprep.sh
++++ b/sysprep/test-virt-sysprep.sh
+@@ -23,6 +23,7 @@ set -e
+ operations=$(
+   ./virt-sysprep --list-operations |
+     fgrep '*' |
++    grep -v lvm-uuids |
+     awk '{printf ("%s,",$1)}' |
+     sed 's/,$//'
+ )
+-- 
+1.7.10.4
+

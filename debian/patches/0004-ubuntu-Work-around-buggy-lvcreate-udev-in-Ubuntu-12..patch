@@ -1,0 +1,44 @@
+From e892f8b2a5d67e02630473cc94fa8fa776652003 Mon Sep 17 00:00:00 2001
+From: "Richard W.M. Jones" <rjones@redhat.com>
+Date: Mon, 22 Apr 2013 12:43:02 +0100
+Subject: [PATCH 04/10] ubuntu: Work around buggy lvcreate/udev in Ubuntu
+ 12.10 and 13.04.
+
+lvcreate and udev somehow don't interact well, so when lvcreate is
+creating the LV, udev doesn't create the device node in time, causing
+the following error:
+
+ /dev/VG/LV: not found: device not cleared
+
+The workaround here is to tell lvcreate not to zero the newly created
+LV.  This means that lvcreate won't try to open the device, so doesn't
+notice that it is missing, and hence doesn't fail.
+---
+ daemon/lvm.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/daemon/lvm.c b/daemon/lvm.c
+index 7aee187..883d868 100644
+--- a/daemon/lvm.c
++++ b/daemon/lvm.c
+@@ -237,7 +237,7 @@ do_lvcreate (const char *logvol, const char *volgroup, int mbytes)
+ 
+   r = command (NULL, &err,
+                str_lvm, "lvcreate",
+-               "-L", size, "-n", logvol, volgroup, NULL);
++               "-L", size, "-n", logvol, "-Z", "n", volgroup, NULL);
+   if (r == -1) {
+     reply_with_error ("%s", err);
+     return -1;
+@@ -264,7 +264,7 @@ do_lvcreate_free (const char *logvol, const char *volgroup, int percent)
+ 
+   r = command (NULL, &err,
+                str_lvm, "lvcreate",
+-               "-l", size, "-n", logvol, volgroup, NULL);
++               "-l", size, "-n", logvol, "-Z", "n", volgroup, NULL);
+   if (r == -1) {
+     reply_with_error ("%s", err);
+     return -1;
+-- 
+1.7.10.4
+

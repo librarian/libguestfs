@@ -1,0 +1,42 @@
+From 40c06798a9faacb417f337f09f3a4a49ac1abc1c Mon Sep 17 00:00:00 2001
+From: Hilko Bengen <bengen@debian.org>
+Date: Thu, 19 Jul 2012 17:27:35 +0200
+Subject: [PATCH 02/10] Fix guestfs, supermin appliance path
+
+The supermin appliance files are not installed to the multiarch lib directory.
+---
+ appliance/Makefile.am |    4 ++--
+ src/Makefile.am       |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/appliance/Makefile.am b/appliance/Makefile.am
+index 8e50156..d4bb22f 100644
+--- a/appliance/Makefile.am
++++ b/appliance/Makefile.am
+@@ -30,8 +30,8 @@ EXTRA_DIST = \
+ 	make.sh.in \
+ 	packagelist.in
+ 
+-fsdir = $(libdir)/guestfs
+-superminfsdir = $(libdir)/guestfs/supermin.d
++fsdir = $(prefix)/lib/guestfs
++superminfsdir = $(prefix)/lib/guestfs/supermin.d
+ 
+ fs_DATA =
+ superminfs_DATA = \
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 57cdf34..f066bee 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -120,7 +120,7 @@ libguestfs_la_SOURCES = \
+ 	libguestfs.syms
+ 
+ libguestfs_la_CPPFLAGS = \
+-	-DGUESTFS_DEFAULT_PATH='"$(libdir)/guestfs"' \
++	-DGUESTFS_DEFAULT_PATH='"$(prefix)/lib/guestfs"' \
+ 	-DGUESTFS_WARN_DEPRECATED=1 \
+ 	-DGUESTFS_PRIVATE=1 \
+ 	-DLIBOSINFO_DB_PATH='"$(datadir)/libosinfo/db"' \
+-- 
+1.7.10.4
+

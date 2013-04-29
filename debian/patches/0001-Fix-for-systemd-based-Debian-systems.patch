@@ -1,0 +1,24 @@
+From a8c2b62f4dbd716f408c5b522a8770b7524244e1 Mon Sep 17 00:00:00 2001
+From: Hilko Bengen <bengen@debian.org>
+Date: Thu, 11 Aug 2011 00:24:11 +0200
+Subject: [PATCH 01/10] Fix for systemd-based Debian systems
+
+---
+ appliance/make.sh.in |    3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/appliance/make.sh.in b/appliance/make.sh.in
+index 8ba1fa4..81ba395 100755
+--- a/appliance/make.sh.in
++++ b/appliance/make.sh.in
+@@ -64,4 +64,7 @@ if grep -q /usr/share/augeas/lenses supermin.d/hostfiles-t; then
+     echo "/usr/share/augeas/lenses/*.aug" >> supermin.d/hostfiles-t
+ fi
+ 
++# Make sure that /init can be run on systemd-enabled Debian systems
++echo '/lib/lsb/*' >> supermin.d/hostfiles-t
++
+ mv supermin.d/hostfiles-t supermin.d/hostfiles
+-- 
+1.7.10.4
+
