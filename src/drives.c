@@ -137,6 +137,7 @@ create_drive_non_file (guestfs_h *g,
   return drv;
 }
 
+#if 0 /* DISABLED IN RHEL 7 */
 static struct drive *
 create_drive_curl (guestfs_h *g,
                    enum drive_protocol protocol,
@@ -221,6 +222,7 @@ create_drive_gluster (guestfs_h *g,
                                 readonly, format, iface, name, disk_label,
                                 use_cache_none);
 }
+#endif /* DISABLED IN RHEL 7 */
 
 static int
 nbd_port (void)
@@ -268,6 +270,7 @@ create_drive_nbd (guestfs_h *g,
                                 use_cache_none);
 }
 
+#if 0 /* DISABLED IN RHEL 7 */
 static struct drive *
 create_drive_rbd (guestfs_h *g,
                   struct drive_server *servers, size_t nr_servers,
@@ -459,6 +462,7 @@ create_drive_iscsi (guestfs_h *g,
                                 readonly, format, iface, name, disk_label,
                                 use_cache_none);
 }
+#endif /* DISABLED IN RHEL 7 */
 
 /* Traditionally you have been able to use /dev/null as a filename, as
  * many times as you like.  Ancient KVM (RHEL 5) cannot handle adding
@@ -911,6 +915,7 @@ guestfs__add_drive_opts (guestfs_h *g, const char *filename,
                                disk_label, use_cache_none);
     }
   }
+#if 0 /* DISABLED IN RHEL 7 */
   else if (STREQ (protocol, "ftp")) {
     drv = create_drive_curl (g, drive_protocol_ftp,
                              servers, nr_servers, filename,
@@ -951,12 +956,14 @@ guestfs__add_drive_opts (guestfs_h *g, const char *filename,
                               readonly, format, iface, name,
                               disk_label, false);
   }
+#endif /* DISABLED IN RHEL 7 */
   else if (STREQ (protocol, "nbd")) {
     drv = create_drive_nbd (g, servers, nr_servers, filename,
                             username, secret,
                             readonly, format, iface, name,
                             disk_label, false);
   }
+#if 0 /* DISABLED IN RHEL 7 */
   else if (STREQ (protocol, "rbd")) {
     drv = create_drive_rbd (g, servers, nr_servers, filename,
                             username, secret,
@@ -982,6 +989,7 @@ guestfs__add_drive_opts (guestfs_h *g, const char *filename,
                              readonly, format, iface, name,
                              disk_label, false);
   }
+#endif /* DISABLED IN RHEL 7 */
   else {
     error (g, _("unknown protocol '%s'"), protocol);
     drv = NULL; /*FALLTHROUGH*/
